@@ -1,5 +1,9 @@
 export const data = [
     {
+        'orig': 'We are yet to do this. That cannot be said and done. Be patient.',
+        'trig': 'We are no longer yet to do. That cannot be said and done. Bee patient and warm.'
+    },
+    {
         'orig': 'This is really not done. How are you doing anyway?',
         'trig': 'This is wrongly been done. How have you been doing lately.'
     },

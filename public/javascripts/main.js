@@ -73,12 +73,11 @@ Quill.register(LinkBlot);
 
 /* global variables */
 var correctionMap = [];
-var offset = 5;
 
 /* Task Button Handlers */
 btn1.addEventListener('click', function(e) {
     // quill.setText(data[0].trig)
-    generateCorrectionMap(data[0+offset])
+    generateCorrectionMap(data[0])
 })
 
 btn2.addEventListener('click', function(e) {
@@ -251,5 +250,7 @@ function generateCorrectionMap(dataobj) {
     })
 }
 
-
-
+/* dev */
+// var a = 'That cannot be said and done.'
+// var b = 'cannot be said and done.'
+// console.log('test diff ::', diffString(a,b))
