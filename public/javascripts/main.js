@@ -1,14 +1,18 @@
 import {data} from './data.js'
 import {diffString, diffString2} from './diff.js'
+import * as tts from './tts.js'
 
 /* acquire dom elements */
-var btn1 = document.getElementById('btn1')
-var btn2 = document.getElementById('btn2')
-var btn3 = document.getElementById('btn3')
+// var btn1 = document.getElementById('btn1')
+// var btn2 = document.getElementById('btn2')
+// var btn3 = document.getElementById('btn3')
 
 /* Dev */ 
 // var test = document.getElementById('test')
 
+/* configure tts */
+tts.setup()
+// tts.speak()
 
 /* Quill setup */
 var toolbarOptions = [
@@ -73,6 +77,9 @@ Quill.register(LinkBlot);
 
 /* global variables */
 var correctionMap = [];
+var quillfocus = false;
+var gestureSwitch = document.getElementById('switch')
+var task4switch = false;    // off: task3; on: task4
 
 /* Task Button Handlers */
 btn1.addEventListener('click', function(e) {
@@ -85,19 +92,75 @@ btn2.addEventListener('click', function(e) {
     generateCorrectionMap(data[1])
 })
 
-btn3.addEventListener('click', function(e) {
-    // quill.setText(data[2].trig)
-    generateCorrectionMap(data[2])
+// error button handlers
+errbtn1.addEventListener('click', function(e) {
+    tts.speak(errbtn1.innerHTML)
 })
 
-document.getElementById('editor').addEventListener('click', (e) => {
-    // if (e.metaKey)
-    //     tts.readSelection()
-    // else
-    
-    var clickedAt = quill.getSelection().index
-    if (quill.getContents(clickedAt).ops[0].attributes) {
+errbtn2.addEventListener('click', function(e) {
+    tts.speak(errbtn2.innerHTML)
+})
 
+errbtn3.addEventListener('click', function(e) {
+    tts.speak(errbtn3.innerHTML)
+})
+
+/* Task 3 and Task 4 Handlers */
+gestureSwitch.addEventListener('click', function (e) {
+    console.log('gestureSwitch state', gestureSwitch.checked)
+    if (gestureSwitch.checked) task4switch = true;
+    else task4switch = false;
+})
+
+iw.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].iw)
+    else quill.setText(data[2].iw)
+})
+ip.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].ip)
+    else quill.setText(data[2].ip)
+})
+dw.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].dw)
+    else quill.setText(data[2].dw)
+})
+dp.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].dp)
+    else quill.setText(data[2].dp)
+})
+rw.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].rw)
+    else quill.setText(data[2].rw)
+})
+rp.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].rp)
+    else quill.setText(data[2].rp)
+})
+nb.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].nb)
+    else quill.setText(data[2].nb)
+})
+nf.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].nf)
+    else quill.setText(data[2].nf)
+})
+ns.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].ns)
+    else quill.setText(data[2].ns)
+})
+
+
+document.getElementById('editor').addEventListener('click', (e) => {
+    if (tts.isSpeaking()) tts.pause();
+
+    var clickedAt = quill.getSelection().index
+
+    if (e.metaKey) {
+        var startOfWord = quill.getText().lastIndexOf(' ', clickedAt) +1
+        tts.speak(quill.getText(startOfWord))
+    }
+
+    if (quill.getContents(clickedAt).ops[0].attributes) {
         /* recompute line breaks */ 
         var splitRegex = /[\.;!]/g
         var text = quill.getText();
@@ -139,6 +202,27 @@ document.getElementById('editor').addEventListener('click', (e) => {
     }
 });
 
+document.getElementById('editor').addEventListener('dblclick', (e) => {
+    var clickedAt = quill.getSelection().index
+    // console.log('double clicked at', clickedAt)
+    tts.speak(quill.getText(clickedAt))
+})
+
+document.getElementById('editor').addEventListener('keypress', (e) => {
+    console.log('key pressed ', e.keyCode);
+
+    if (!quillfocus) quill.blur();
+    else quill.focus();
+        
+    if (e.keyCode == 96)    // ascii for ` (Chrome)
+    // if (e.keyCode == 27)    // for Firefox
+        quillfocus = !quillfocus
+    else if (e.keyCode == 32) {     // for Chrome
+    // else if (e.keyCode == 0) {      // for Firefox
+        if (tts.isSpeaking()) tts.pause();
+    }
+});
+
 
 /* Dev */ 
 /*
@@ -149,7 +233,7 @@ test.addEventListener('click', function(e) {
 function generateCorrectionMap(dataobj) {
     console.log('original data ::', dataobj.orig)
 
-    var splitRegex = /\b.*?\b[\.;!]/g
+    var splitRegex = /\b.*?\b[\.;!?]/g
     var lines = {}
     lines.orig = dataobj.orig.match(splitRegex)
     lines.trig = dataobj.trig.match(splitRegex)
@@ -254,3 +338,5 @@ function generateCorrectionMap(dataobj) {
 // var a = 'That cannot be said and done.'
 // var b = 'cannot be said and done.'
 // console.log('test diff ::', diffString(a,b))
+
+
