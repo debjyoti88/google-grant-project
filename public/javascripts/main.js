@@ -136,13 +136,13 @@ rp.addEventListener('click', function(e) {
     if (task4switch) quill.setText(data[3].rp)
     else quill.setText(data[2].rp)
 })
+nr.addEventListener('click', function(e) {
+    if (task4switch) quill.setText(data[3].nr)
+    else quill.setText(data[2].nr)
+})
 nb.addEventListener('click', function(e) {
     if (task4switch) quill.setText(data[3].nb)
     else quill.setText(data[2].nb)
-})
-nf.addEventListener('click', function(e) {
-    if (task4switch) quill.setText(data[3].nf)
-    else quill.setText(data[2].nf)
 })
 ns.addEventListener('click', function(e) {
     if (task4switch) quill.setText(data[3].ns)
