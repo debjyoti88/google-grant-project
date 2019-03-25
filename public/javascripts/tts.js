@@ -1,8 +1,9 @@
 // global variables
 var voice;
-var rate = 0.9;
+var rate = 0.7;
 var utterThis = new SpeechSynthesisUtterance('');
 let synth = window.speechSynthesis;
+var voiceSelect = document.querySelector('select');
 
 /* Speech synthesizer setup */
 export function setup() {
@@ -20,6 +21,29 @@ export function setup() {
         )
     }
 
+    function populateVoiceList() {
+        voices = synth.getVoices();
+        
+        for(i = 0; i < voices.length ; i++) {
+            var option = document.createElement('option');
+            option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+            
+            if(voices[i].default) {
+                option.textContent += ' -- DEFAULT';
+            }
+            
+            option.setAttribute('data-lang', voices[i].lang);
+            option.setAttribute('data-name', voices[i].name);
+            voiceSelect.appendChild(option);
+        }
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
+    
+
     let s = setSpeech();
     // s.then((voices) => console.log(voices));  
     s.then((voices) => {
@@ -30,8 +54,14 @@ export function setup() {
 
 export function speak(text) {
     utterThis = new SpeechSynthesisUtterance('');
+    var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+    for(i = 0; i < voices.length ; i++) {
+        if(voices[i].name === selectedOption) {
+            utterThis.voice = voices[i];
+        }
+    }
     
-    utterThis.voice = voice;
+    // utterThis.voice = voice;
     utterThis.rate = rate;
     utterThis.text = text;
 
