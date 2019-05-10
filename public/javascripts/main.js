@@ -92,6 +92,11 @@ btn2.addEventListener('click', function(e) {
     generateCorrectionMap(data[1])
 })
 
+btn3.addEventListener('click', function(e) {
+    // quill.setText(data[1].trig)
+    generateCorrectionMap(data[4])
+})
+
 // error button handlers
 errbtn1.addEventListener('click', function(e) {
     tts.speak(errbtn1.innerHTML)

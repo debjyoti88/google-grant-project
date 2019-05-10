@@ -3,7 +3,7 @@ var voice;
 var rate = 0.7;
 var utterThis = new SpeechSynthesisUtterance('');
 let synth = window.speechSynthesis;
-var voiceSelect = document.querySelector('select');
+// var voiceSelect = document.querySelector('select');
 
 /* Speech synthesizer setup */
 export function setup() {
@@ -21,47 +21,49 @@ export function setup() {
         )
     }
 
-    function populateVoiceList() {
-        voices = synth.getVoices();
+    // function populateVoiceList() {
+    //     voices = synth.getVoices();
         
-        for(i = 0; i < voices.length ; i++) {
-            var option = document.createElement('option');
-            option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+    //     for(i = 0; i < voices.length ; i++) {
+    //         var option = document.createElement('option');
+    //         option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
             
-            if(voices[i].default) {
-                option.textContent += ' -- DEFAULT';
-            }
+    //         if(voices[i].default) {
+    //             option.textContent += ' -- DEFAULT';
+    //         }
             
-            option.setAttribute('data-lang', voices[i].lang);
-            option.setAttribute('data-name', voices[i].name);
-            voiceSelect.appendChild(option);
-        }
-    }
+    //         option.setAttribute('data-lang', voices[i].lang);
+    //         option.setAttribute('data-name', voices[i].name);
+    //         voiceSelect.appendChild(option);
+    //     }
+    // }
 
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = populateVoiceList;
-    }
+    // if (speechSynthesis.onvoiceschanged !== undefined) {
+    //     speechSynthesis.onvoiceschanged = populateVoiceList;
+    // }
 
     
 
     let s = setSpeech();
     // s.then((voices) => console.log(voices));  
     s.then((voices) => {
-        voice = voices.filter(x => x.default)[0]
+        // voice = voices.filter(x => x.default)[0]
+        voice = voices.filter(x => x.name === 'Google US English')[0]
+        // voice = voices[5]
         console.log(voice)
     });  
 }
 
 export function speak(text) {
-    utterThis = new SpeechSynthesisUtterance('');
-    var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
-    for(i = 0; i < voices.length ; i++) {
-        if(voices[i].name === selectedOption) {
-            utterThis.voice = voices[i];
-        }
-    }
+    // utterThis = new SpeechSynthesisUtterance('');
+    // var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+    // for(i = 0; i < voices.length ; i++) {
+    //     if(voices[i].name === selectedOption) {
+    //         utterThis.voice = voices[i];
+    //     }
+    // }
     
-    // utterThis.voice = voice;
+    utterThis.voice = voice;
     utterThis.rate = rate;
     utterThis.text = text;
 
