@@ -1,6 +1,9 @@
 import * as tts from './tts.js'
 import { quill, Delta, getSelectionIndex } from './quill.js';
 import { formatText } from './stringutil.js'
+import { getWebSocketRef } from './remoteDriver.js'
+
+let ws = getWebSocketRef()
 
 /* Speech recognizer setup */
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -34,6 +37,7 @@ recognition.onresult = function(event) {
     if (event.results[last].isFinal) {
         console.log('hypothesis: ' + hypothesis);
         transcript.innerHTML = hypothesis
+        ws.send(JSON.stringify(hypothesis))
         
         quill.updateContents(new Delta()
             .retain(quill.getLength() - lastHypothesisLength - 1)
