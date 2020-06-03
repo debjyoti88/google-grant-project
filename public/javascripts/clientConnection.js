@@ -1,4 +1,4 @@
-var socket = io('http://192.168.0.102:3000')
+var socket = io.connect('http://172.31.102.12:3000')
 
 // socket.on('connection', function() {
 //     console.log('connection established')
