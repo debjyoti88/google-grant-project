@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('gesturewoz:server');
 var http = require('http');
+var socket = require('socket.io');
 
 /**
  * Get port from environment and store in Express.
@@ -14,6 +15,7 @@ var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+// app.listen(port, '0.0.0.0');
 
 /**
  * Create HTTP server.
@@ -25,7 +27,7 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, "0.0.0.0");
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -88,3 +90,19 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+var io = socket(server)
+
+io.on('connection', (socket) => {
+  console.log('made socket connection', socket.id)
+  // console.log('Listening to sockets:', Object.keys(io.sockets.sockets));
+  // socket.emit('message', 'hello')
+  socket.on('utterance', (data) => {
+    io.sockets.emit('utterance', data);
+  });
+
+  socket.on('pushQuill', (data) => {
+    io.sockets.emit('pushQuill', data);
+  });
+
+})

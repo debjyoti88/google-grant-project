@@ -1,9 +1,8 @@
 import * as tts from './tts.js'
 import { quill, Delta, getSelectionIndex } from './quill.js';
 import { formatText } from './stringutil.js'
-import { getWebSocketRef } from './remoteDriver.js'
+import { getSocket } from './socket.js'
 
-let ws = getWebSocketRef()
 
 /* Speech recognizer setup */
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
@@ -16,6 +15,7 @@ recognition.interimResults = true;
 recognition.maxAlternatives = 1;
 
 let lastHypothesisLength = 0;
+let socket = getSocket();
 
 /* Recognition Events */
 recognition.onresult = function(event) {
@@ -25,6 +25,7 @@ recognition.onresult = function(event) {
     tts.pause()
 
     transcript.innerHTML = hypothesis
+    socket.emit('utterance', {'hypothesis':hypothesis, 'finalStatus': false})
 
     quill.updateContents(new Delta()
         .retain(quill.getLength() - lastHypothesisLength - 1)
@@ -37,7 +38,7 @@ recognition.onresult = function(event) {
     if (event.results[last].isFinal) {
         console.log('hypothesis: ' + hypothesis);
         transcript.innerHTML = hypothesis
-        ws.send(JSON.stringify(hypothesis))
+        socket.emit('utterance', { 'hypothesis': hypothesis, 'finalStatus': true })
         
         quill.updateContents(new Delta()
             .retain(quill.getLength() - lastHypothesisLength - 1)
@@ -67,3 +68,7 @@ recognition.onend = function() {
         console.log('Speech recognition stopped.');
     }
 }
+
+sendbtn.addEventListener('click', function (e) {
+    socket.emit('pushQuill', quill.getText())
+})
