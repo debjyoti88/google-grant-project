@@ -4,6 +4,7 @@ var rate = 0.7;
 var utterThis = new SpeechSynthesisUtterance('');
 let synth = window.speechSynthesis;
 // var voiceSelect = document.querySelector('select');
+let timeoutResumeInfinity;
 
 /* Speech synthesizer setup */
 export function setup() {
