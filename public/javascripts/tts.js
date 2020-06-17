@@ -85,3 +85,16 @@ export function pause() {
 utterThis.onerror = function(event) {
     console.log('An error has occurred with the speech synthesis: ' + event.error);
 }
+
+function resumeInfinity() {
+    window.speechSynthesis.resume();
+    timeoutResumeInfinity = setTimeout(resumeInfinity, 1000);
+}
+
+utterThis.onstart = function (event) {
+    resumeInfinity();
+};
+
+utterThis.onend = function (event) {
+    clearTimeout(timeoutResumeInfinity);
+};
