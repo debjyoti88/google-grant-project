@@ -1,5 +1,5 @@
 import * as tts from './tts.js'
-import { quill, Delta, getSelectionIndex } from './quill.js';
+import { quill, Delta } from './quill.js';
 import { formatText } from './stringutil.js'
 import { getSocket } from './socket.js'
 
@@ -16,6 +16,7 @@ recognition.maxAlternatives = 1;
 
 let lastHypothesisLength = 0;
 let socket = getSocket();
+let selectionIndex = 0;
 
 /* Recognition Events */
 recognition.onresult = function(event) {
@@ -36,6 +37,7 @@ recognition.onresult = function(event) {
     lastHypothesisLength = hypothesis.length
 
     if (event.results[last].isFinal) {
+        selectionIndex = quill.getSelection();
         console.log('hypothesis: ' + hypothesis);
         transcript.innerHTML = hypothesis
         socket.emit('utterance', { 'hypothesis': hypothesis, 'finalStatus': true })
@@ -48,7 +50,7 @@ recognition.onresult = function(event) {
         );
 
         quill.setText(formatText(quill.getText()) + ' ')
-        quill.setSelection(getSelectionIndex())
+        quill.setSelection(selectionIndex);
 
         lastHypothesisLength = 0
     }
